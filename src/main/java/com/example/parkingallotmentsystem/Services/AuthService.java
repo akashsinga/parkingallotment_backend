@@ -1,15 +1,17 @@
 package com.example.parkingallotmentsystem.Services;
 
-import com.example.parkingallotmentsystem.DTO.LoginRequest;
-import com.example.parkingallotmentsystem.DTO.LoginResponse;
-import com.example.parkingallotmentsystem.DTO.RegisterRequest;
-import com.example.parkingallotmentsystem.DTO.Response;
+import com.example.parkingallotmentsystem.DTO.*;
+import com.example.parkingallotmentsystem.Models.PasswordResets;
 import com.example.parkingallotmentsystem.Models.User;
+import com.example.parkingallotmentsystem.Repositories.PasswordResetRepository;
 import com.example.parkingallotmentsystem.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.Random;
 
 @Service
 public class AuthService {
@@ -17,6 +19,8 @@ public class AuthService {
     private UserRepository userRepository;
     @Autowired
     private EmailService emailService;
+    @Autowired
+    private PasswordResetRepository passwordResetRepository;
 
     public String register(RegisterRequest registerRequest) throws Exception
     {
@@ -72,6 +76,40 @@ public class AuthService {
             return true;
         }
         return false;
+    }
+
+    public String sendVerificationCode(String email) {
+        String verification_code=String.format("%06d",new Random().nextInt(999999));
+        User user=userRepository.findByEmail(email).get();
+        if(user==null)
+        {
+            return "User Doesnot Exist";
+        }
+        PasswordResets passwordResets=new PasswordResets(verification_code,user,"code_sent", LocalDateTime.now());
+        passwordResetRepository.save(passwordResets);
+        emailService.sendResetCode(user,verification_code);
+        return "Verification Code Sent";
+    }
+
+    public boolean verifyCode(VerifyCode verifyCode)
+    {
+        User user=userRepository.findByEmail(verifyCode.getEmail()).get();
+        PasswordResets passwordResets=passwordResetRepository.getByUserID(user.getId());
+        if(passwordResets.getReset_code().equals(verifyCode.getCode()))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public String resetPassword(ResetPassword resetPassword)
+    {
+        User user=userRepository.findByEmail(resetPassword.getEmail()).get();
+        String crypted_password=encryptPassword(resetPassword.getPassword());
+        user.setPassword(crypted_password);
+        userRepository.save(user);
+        emailService.sendResetPasswordConfirmation(user);
+        return "Password Reset Successfully";
     }
 }
           

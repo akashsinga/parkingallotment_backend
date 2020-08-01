@@ -1,6 +1,7 @@
 package com.example.parkingallotmentsystem.Models;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name="password_resets")
@@ -16,14 +17,17 @@ public class PasswordResets {
     private User user;
     @Column
     private String status;
+    @Column
+    private LocalDateTime createdDateTime;
 
     public PasswordResets() {
     }
 
-    public PasswordResets(String reset_code, User user, String status) {
+    public PasswordResets(String reset_code, User user, String status,LocalDateTime createdDateTime) {
         this.reset_code = reset_code;
         this.user = user;
         this.status = status;
+        this.createdDateTime=createdDateTime;
     }
 
     public int getId() {
@@ -52,5 +56,13 @@ public class PasswordResets {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public LocalDateTime getCreatedDateTime() {
+        return createdDateTime;
+    }
+
+    public void setCreatedDateTime(LocalDateTime createdDateTime) {
+        this.createdDateTime = createdDateTime;
     }
 }

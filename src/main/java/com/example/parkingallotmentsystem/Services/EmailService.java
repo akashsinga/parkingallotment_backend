@@ -49,4 +49,25 @@ public class EmailService
         email.setText(mailText);
         javaMailSender.send(email);
     }
+
+    public void sendResetCode(User user, String verification_code) {
+        String mailText=" Dear "+user.getFullname()+",\n\n Your password reset request is verified. Please visit the site with verification code: "+verification_code+" to reset your password.\n\n Thanks and Regards,\n MyParking Team";
+        SimpleMailMessage email=new SimpleMailMessage();
+        email.setTo(user.getEmail());
+        email.setFrom(fromemail);
+        email.setSubject("Password Reset Request");
+        email.setText(mailText);
+        javaMailSender.send(email);
+    }
+
+    public void sendResetPasswordConfirmation(User user)
+    {
+        String mailText=" Dear "+user.getFullname()+",\n\n Your password has been successfully reset. \n\n Thanks and Regards,\n MyParking Team";
+        SimpleMailMessage email=new SimpleMailMessage();
+        email.setTo(user.getEmail());
+        email.setFrom(fromemail);
+        email.setSubject("Password Reset Successfully");
+        email.setText(mailText);
+        javaMailSender.send(email);
+    }
 }

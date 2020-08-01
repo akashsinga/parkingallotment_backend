@@ -1,14 +1,14 @@
 package com.example.parkingallotmentsystem.Controllers;
 
-import com.example.parkingallotmentsystem.DTO.LoginRequest;
-import com.example.parkingallotmentsystem.DTO.LoginResponse;
-import com.example.parkingallotmentsystem.DTO.RegisterRequest;
-import com.example.parkingallotmentsystem.DTO.Response;
+import com.example.parkingallotmentsystem.DTO.*;
+import com.example.parkingallotmentsystem.Models.User;
 import com.example.parkingallotmentsystem.Services.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Random;
 
 @RestController
 @RequestMapping
@@ -63,8 +63,26 @@ public class AuthController
     }
 
     @PostMapping("/forgotpassword")
-    public ResponseEntity forgotPassword(@RequestBody String email)
+    public ResponseEntity<Response> sendVerificationCode(@RequestBody String email)
     {
-        return null;
+        Response response=new Response();
+        response.setResponse(authService.sendVerificationCode(email));
+        return new ResponseEntity<Response>(response,HttpStatus.OK);
+    }
+
+    @PostMapping("/forgotpassword/verify")
+    public ResponseEntity<Response> verifyCode(@RequestBody VerifyCode verifyCode)
+    {
+        Response response=new Response();
+        response.setResponse(String.valueOf(authService.verifyCode(verifyCode)));
+        return new ResponseEntity<Response>(response,HttpStatus.OK);
+    }
+
+    @PostMapping("/forgotpassword/reset")
+    public ResponseEntity<Response> resetPassword(@RequestBody ResetPassword resetPassword)
+    {
+        Response response=new Response();
+        response.setResponse(authService.resetPassword(resetPassword));
+        return new ResponseEntity<Response>(response,HttpStatus.OK);
     }
 }
