@@ -18,7 +18,7 @@ public class AuthController
     private AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity register(@RequestBody RegisterRequest registerRequest)
+    public ResponseEntity<Response> register(@RequestBody RegisterRequest registerRequest)
     {
         Response response=new Response();
         try
@@ -26,17 +26,24 @@ public class AuthController
             response.setResponse(authService.register(registerRequest));
         } catch (Exception e) {
             response.setResponse(e.getMessage());
-            return new ResponseEntity(response,HttpStatus.OK);
+            return new ResponseEntity<Response>(response,HttpStatus.OK);
         }
         return new ResponseEntity(response,HttpStatus.OK);
     }
     @PostMapping("/register/checkuser")
-    public ResponseEntity checkUser(@RequestBody String username) throws Exception
+    public ResponseEntity<Response> checkUser(@RequestBody String username) throws Exception
     {
         System.out.println(username);
         Response response=new Response();
         response.setResponse(String.valueOf(authService.userExists(username)));
-        return new ResponseEntity(response,HttpStatus.OK);
+        return new ResponseEntity<Response>(response,HttpStatus.OK);
+    }
+    @PostMapping("/register/checkemail")
+    public ResponseEntity checkEmail(@RequestBody String email)
+    {
+        Response response=new Response();
+        response.setResponse(String.valueOf(authService.emailExists(email)));
+        return new ResponseEntity<Response>(response,HttpStatus.OK);
     }
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody LoginRequest loginRequest)
@@ -53,5 +60,11 @@ public class AuthController
             return new ResponseEntity(response,HttpStatus.OK);
         }
         return new ResponseEntity(loginResponse,HttpStatus.OK);
+    }
+
+    @PostMapping("/forgotpassword")
+    public ResponseEntity forgotPassword(@RequestBody String email)
+    {
+        return null;
     }
 }

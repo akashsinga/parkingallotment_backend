@@ -15,7 +15,7 @@ public class User {
     private String fullname;
     @Column
     private String mobile;
-    @Column
+    @Column(unique = true)
     private String email;
     @Column
     private String password;

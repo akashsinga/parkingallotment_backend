@@ -66,5 +66,12 @@ public class AuthService {
         }
         return false;
     }
+
+    public boolean emailExists(String email) {
+        if(userRepository.findByEmail(email).isPresent()){
+            return true;
+        }
+        return false;
+    }
 }
           
