@@ -20,4 +20,7 @@ public interface BookingRepository extends JpaRepository<Booking,Integer>
 
     @Query(value ="select * from bookings where location_id=:id and status=:status and :fromtime between fromdatetime and todatetime order by booking_date ASC LIMIT 1",nativeQuery = true)
     Booking getWaitingListReservation(@Param("id")int id,@Param("fromtime")LocalDateTime fromdatetime,@Param("status") String status);
+
+    @Query(value ="select * from bookings where booking_date between :from and :to order by id ASC",nativeQuery = true)
+    List<Booking> generateReports(@Param("from") LocalDateTime fromdatetime, @Param("to")LocalDateTime todatetime);
 }

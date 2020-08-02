@@ -1,5 +1,6 @@
 package com.example.parkingallotmentsystem.Services;
 
+import com.example.parkingallotmentsystem.DTO.GetReports;
 import com.example.parkingallotmentsystem.Models.Booking;
 import com.example.parkingallotmentsystem.Models.Location;
 import com.example.parkingallotmentsystem.Models.Owner;
@@ -86,5 +87,9 @@ public class AdminService {
         user.setType(role);
         userRepository.save(user);
         return "User Role Modified";
+    }
+
+    public List<Booking> getReports(GetReports getReports) {
+        return bookingRepository.generateReports(getReports.getFromdatetime(),getReports.getTodatetime());
     }
 }

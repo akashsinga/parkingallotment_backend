@@ -1,7 +1,9 @@
 package com.example.parkingallotmentsystem.Controllers;
 
 import com.example.parkingallotmentsystem.DTO.AdminDashboardDetails;
+import com.example.parkingallotmentsystem.DTO.GetReports;
 import com.example.parkingallotmentsystem.DTO.Response;
+import com.example.parkingallotmentsystem.Models.Booking;
 import com.example.parkingallotmentsystem.Models.Location;
 import com.example.parkingallotmentsystem.Models.User;
 import com.example.parkingallotmentsystem.Services.AdminService;
@@ -79,5 +81,13 @@ public class AdminController
         Response response=new Response();
         response.setResponse(adminService.editUser(id,role));
         return new ResponseEntity<Response>(response,HttpStatus.OK);
+    }
+
+    @PostMapping("admin/reports")
+    public List<Booking> getReports(@RequestBody GetReports getReports)
+    {
+        List<Booking> bookings=adminService.getReports(getReports);
+        System.out.println(getReports.getFromdatetime());
+        return bookings;
     }
 }
