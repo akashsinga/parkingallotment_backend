@@ -7,6 +7,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import javax.mail.internet.MimeMessage;
+import javax.xml.crypto.dsig.SignatureMethod;
 
 
 @Service
@@ -67,6 +68,39 @@ public class EmailService
         email.setTo(user.getEmail());
         email.setFrom(fromemail);
         email.setSubject("Password Reset Successfully");
+        email.setText(mailText);
+        javaMailSender.send(email);
+    }
+
+    public void sendCancellationEmail(Booking booking) {
+        String mailText=" Dear "+booking.getUser().getFullname()+", \n\n Your parking reservation by ID: "+booking.getId()+" at "+booking.getLocation().getName()+" is cancelled as per your request. \n Refund Initiated. \n\n Thanks and Regards,\n MyParking Team.";
+        SimpleMailMessage email=new SimpleMailMessage();
+        email.setTo(booking.getUser().getEmail());
+        email.setFrom(fromemail);
+        email.setSubject("Parking Reservation Cancelled");
+        email.setText(mailText);
+        javaMailSender.send(email);
+        this.sendCancellationToOwner(booking);
+    }
+
+    public void sendCancellationToOwner(Booking booking)
+    {
+        String mailText=" Dear "+booking.getLocation().getOwner().getName()+",\n\n Parking Reservation at "+booking.getLocation().getName()
+                +" reserved by "+booking.getUser().getFullname()+" from "+booking.getFromdatetime()+" to "+booking.getTodatetime()+" is cancelled.\n\n Thanks and Regards,\n MyParking Team.";
+        SimpleMailMessage email=new SimpleMailMessage();
+        email.setTo(booking.getLocation().getOwner().getEmail());
+        email.setFrom(fromemail);
+        email.setSubject("Parking Reservation Cancelled");
+        email.setText(mailText);
+        javaMailSender.send(email);
+    }
+
+    public void confirmWaitingListCustomer(Booking booking) {
+        String mailText="Dear "+booking.getUser().getFullname()+", \n\n Your parking reservation by ID: "+booking.getId()+" and Payment ID: "+booking.getPayment_Id()+" at "+booking.getLocation().getName()+" is now confirmed. \n Logon to www.myparking.com to download your parking receipt from MyBookings page. \n\n Thanks and Regards,\n MyParking Team";
+        SimpleMailMessage email=new SimpleMailMessage();
+        email.setTo(booking.getUser().getEmail());
+        email.setFrom(fromemail);
+        email.setSubject("Parking Reservation Confirmed");
         email.setText(mailText);
         javaMailSender.send(email);
     }

@@ -55,4 +55,12 @@ public class UserController
         response.setResponse(String.valueOf(userService.isOccupied(checkAvailability)));
         return new ResponseEntity<Response>(response, HttpStatus.OK);
     }
+
+    @GetMapping("/user/bookings/cancel/{id}")
+    public ResponseEntity<Response> cancelReservation(@PathVariable int id)
+    {
+        Response response=new Response();
+        response.setResponse(userService.cancelReservation(id));
+        return new ResponseEntity<Response>(response,HttpStatus.OK);
+    }
 }

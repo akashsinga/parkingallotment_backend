@@ -10,6 +10,7 @@ import com.example.parkingallotmentsystem.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.awt.print.Book;
 import java.util.List;
 
 @Service
@@ -54,5 +55,25 @@ public class UserService {
     public boolean isOccupied(CheckAvailability checkAvailability)
     {
         return bookingRepository.isAvailable(checkAvailability.getFromdatetime(), checkAvailability.getTodatetime(),checkAvailability.getParking_id())!=0;
+    }
+
+    public String cancelReservation(int id) {
+        Booking booking=bookingRepository.findById(id).get();
+        booking.setStatus("cancelled");
+        bookingRepository.save(booking);
+        emailService.sendCancellationEmail(booking);
+
+        Booking temp=bookingRepository.getWaitingListReservation(booking.getLocation().getId(),booking.getFromdatetime(),"waiting");
+        if(temp==null) {
+        }
+        else
+        {
+            System.out.println(temp.getUser().getFullname());
+            temp.setStatus("reserved");
+            bookingRepository.save(temp);
+            emailService.confirmWaitingListCustomer(temp);
+            emailService.sendReservationToOwner(temp);
+        }
+        return "Booking Successfully Cancelled";
     }
 }

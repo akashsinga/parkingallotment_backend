@@ -108,6 +108,8 @@ public class AuthService {
         String crypted_password=encryptPassword(resetPassword.getPassword());
         user.setPassword(crypted_password);
         userRepository.save(user);
+        PasswordResets passwordResets=passwordResetRepository.getByUserID(user.getId());
+        passwordResets.setStatus("reset");
         emailService.sendResetPasswordConfirmation(user);
         return "Password Reset Successfully";
     }
