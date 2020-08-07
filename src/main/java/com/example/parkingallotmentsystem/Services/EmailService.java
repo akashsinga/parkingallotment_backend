@@ -104,4 +104,15 @@ public class EmailService
         email.setText(mailText);
         javaMailSender.send(email);
     }
+
+    public void sendCancellationEmailAdmin(Booking temp) {
+        String mailText=" Dear "+temp.getUser().getFullname()+", \n\n Your parking reservation by ID: "+temp.getId()+" at "+temp.getLocation().getName()+" is cancelled due to some issue. \n Refund Initiated. \n\n Thanks and Regards,\n MyParking Team.";
+        SimpleMailMessage email=new SimpleMailMessage();
+        email.setTo(temp.getUser().getEmail());
+        email.setFrom(fromemail);
+        email.setSubject("Parking Reservation Cancelled");
+        email.setText(mailText);
+        javaMailSender.send(email);
+        this.sendCancellationToOwner(temp);
+    }
 }

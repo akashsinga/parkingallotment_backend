@@ -12,8 +12,10 @@ import com.example.parkingallotmentsystem.Repositories.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -32,6 +34,9 @@ public class AdminService {
     @Autowired
     private OwnerRepository ownerRepository;
 
+    @Autowired
+    private EmailService emailService;
+
     public String addParkingLot(Location location)
     {
         logger.info("adding a parking lot");
@@ -44,6 +49,20 @@ public class AdminService {
         parkingLocationRepository.save(temp);
         logger.info("Parking Lot Added Successfully");
         return "Parking Location Added Successfully";
+    }
+
+    @Scheduled(fixedRate = 120000)
+    public void changeStatusToOccupied()
+    {
+        logger.info("Checking For Occupied Parking Lots");
+        bookingRepository.setOccupied(LocalDateTime.now());
+    }
+
+    @Scheduled(fixedRate = 120000)
+    public void changeStatusToCompleted()
+    {
+        logger.info("Checking For Completed Reservations");
+        bookingRepository.setCompleted(LocalDateTime.now());
     }
 
     public long getUserCount()
@@ -119,5 +138,15 @@ public class AdminService {
     {
         logger.info("Fetching Bookings in Time Range: "+getReports.getFromdatetime()+" - "+getReports.getTodatetime());
         return bookingRepository.generateReports(getReports.getFromdatetime(),getReports.getTodatetime());
+    }
+
+    public String cancelReservation(int id)
+    {
+        logger.info("Cancel Reservation Request From ADMIN");
+        Booking temp=bookingRepository.findById(id).get();
+        temp.setStatus("cancelled");
+        bookingRepository.save(temp);
+        emailService.sendCancellationEmailAdmin(temp);
+        return  "Reservation Cancelled Successfully";
     }
 }

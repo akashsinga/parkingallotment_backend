@@ -54,6 +54,20 @@ public class AdminController
         return new ResponseEntity<Response>(response,HttpStatus.OK);
     }
 
+    @GetMapping("admin/bookings/cancel/{id}")
+    public ResponseEntity<Response> cancelReservation(@PathVariable int id)
+    {
+        Response resp=new Response();
+        try{
+            resp.setResponse(adminService.cancelReservation(id));
+        }
+        catch(Exception e)
+        {
+            resp.setResponse(e.getMessage());
+        }
+        return new ResponseEntity<Response>(resp,HttpStatus.OK);
+    }
+
     @PostMapping("admin/parkings/add")
     public ResponseEntity<Response> addParking(@RequestBody Location location)
     {
