@@ -10,18 +10,21 @@ import com.example.parkingallotmentsystem.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
+@RequestMapping(value = "/user",headers = {"request_id"})
+@Validated
 public class UserController
 {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/user/reserve")
+    @PostMapping("/reserve")
     public ResponseEntity<Response> reserveParking(@RequestBody ReserveParking reserveParking)
     {
         User user=userService.getUserById(reserveParking.getUser_id());
@@ -35,28 +38,28 @@ public class UserController
         return new ResponseEntity<Response>(response,HttpStatus.OK);
     }
 
-    @GetMapping("/user/dashboard/getLocations")
-    public ResponseEntity<List> getParkings()
+    @GetMapping("/dashboard/getLocations")
+    public List<Location> getParkings()
     {
         List<Location> parkings=userService.getLocations();
-        return new ResponseEntity<List>(parkings, HttpStatus.OK);
+        return parkings;
     }
 
-    @GetMapping("/user/bookings/{id}")
-    public ResponseEntity<List> getPreviousBookings(@PathVariable int id)
+    @GetMapping("/bookings/{id}")
+    public List<Booking> getPreviousBookings(@PathVariable int id)
     {
         List<Booking> bookings=userService.getPreviousBookings(id);
-        return new ResponseEntity<List>(bookings,HttpStatus.OK);
+        return bookings;
     }
 
-    @PostMapping("/user/parkings/lots/available")
+    @PostMapping("/parkings/lots/available")
     public ResponseEntity<Response> isAvailable(@RequestBody CheckAvailability checkAvailability) {
         Response response = new Response();
         response.setResponse(String.valueOf(userService.isOccupied(checkAvailability)));
         return new ResponseEntity<Response>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/user/bookings/cancel/{id}")
+    @GetMapping("/bookings/cancel/{id}")
     public ResponseEntity<Response> cancelReservation(@PathVariable int id)
     {
         Response response=new Response();

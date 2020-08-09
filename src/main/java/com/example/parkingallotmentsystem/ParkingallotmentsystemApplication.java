@@ -11,5 +11,4 @@ public class ParkingallotmentsystemApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ParkingallotmentsystemApplication.class, args);
 	}
-
 }

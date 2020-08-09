@@ -1,14 +1,11 @@
 package com.example.parkingallotmentsystem.Controllers;
 
 import com.example.parkingallotmentsystem.DTO.*;
-import com.example.parkingallotmentsystem.Models.User;
 import com.example.parkingallotmentsystem.Services.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Random;
 
 @RestController
 @RequestMapping
@@ -28,7 +25,7 @@ public class AuthController
             response.setResponse(e.getMessage());
             return new ResponseEntity<Response>(response,HttpStatus.OK);
         }
-        return new ResponseEntity(response,HttpStatus.OK);
+        return new ResponseEntity<Response>(response,HttpStatus.OK);
     }
     @PostMapping("/register/checkuser")
     public ResponseEntity<Response> checkUser(@RequestBody String username) throws Exception
@@ -39,14 +36,14 @@ public class AuthController
         return new ResponseEntity<Response>(response,HttpStatus.OK);
     }
     @PostMapping("/register/checkemail")
-    public ResponseEntity checkEmail(@RequestBody String email)
+    public ResponseEntity<Response> checkEmail(@RequestBody String email)
     {
         Response response=new Response();
         response.setResponse(String.valueOf(authService.emailExists(email)));
         return new ResponseEntity<Response>(response,HttpStatus.OK);
     }
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody LoginRequest loginRequest)
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest)
     {
         LoginResponse loginResponse;
         try
@@ -57,9 +54,9 @@ public class AuthController
         {
             Response response=new Response();
             response.setResponse(e.getMessage());
-            return new ResponseEntity(response,HttpStatus.OK);
+            return new ResponseEntity<Response>(response,HttpStatus.OK);
         }
-        return new ResponseEntity(loginResponse,HttpStatus.OK);
+        return new ResponseEntity<LoginResponse>(loginResponse,HttpStatus.OK);
     }
 
     @PostMapping("/forgotpassword")
